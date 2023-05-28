@@ -1,0 +1,80 @@
+
+.test-dictation {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  
+}
+
+h1,
+h2 {
+  text-align: center;
+  color: yellow;
+}
+
+select,
+button {
+  margin-bottom: 20px; /* Marge en bas pour faire descendre les boutons */
+  margin-right: 10px; /* Marge à droite pour le premier bouton */
+  margin-left: 10px; /* Marge à gauche pour le deuxième bouton */
+  padding: 5px; /* Espacement interne pour ajouter de l'espace autour du texte des boutons */
+  
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+/* ... */
+.timer {
+  text-align: center;
+}
+
+.repetitions {
+  text-align: center;
+}
+
+.test-dictation{
+    background-color: yellowgreen;
+    padding: 100px;
+    margin-top: 15px;
+    
+}
+
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .container > div {
+    display: flex;
+    align-items: center;
+  }
+  
+  .container > div label {
+    margin-right: 10px;
+  }
+  
+  .container > div select {
+    width: 200px;
+  }
+  
+  .container > div button {
+    margin-left: 10px;
+  }
+
+  .subject-actions{
+    margin-top: 60px;
+    margin-right: 30px; 
+    margin-left: 30px; 
+     
+
+  }
+  
+
+
+

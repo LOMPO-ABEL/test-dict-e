@@ -1,0 +1,24 @@
+[
+  {
+          "title": "Sujet 1",
+          "difficulty": "facile",
+          "text": "Le test de dictée est un excellent moyen d'améliorer ses compétences en orthographe. Ainsi il le faut vraiment pour un language meilleur."
+        },
+
+        {
+          "title": "Sujet 2",
+          "difficulty": "moyen",
+          "text": "La dictée est un exercice classique souvent utilisé dans les écoles pour évaluer les capacités des élèves."
+        },
+
+        {
+          "title": "Sujet 3",
+          "difficulty": "difficile",
+          "text": "La vitesse de lecture et la précision sont des aspects importants lors d'un test de dictée."
+        },
+        {
+          "title": "Sujet 4",
+          "difficulty": "difficile",
+          "text": "Voici des exemples de problématiques et de sujets dont vous pouvez vous inspirer dans la production de vos mémoires, thèses ou dissertations. Vous pouvez également les ajuster en fonction de votre formation, thème ou sujet principal."
+        }
+]
