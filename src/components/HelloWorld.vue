@@ -117,9 +117,22 @@ export default {
       title: "",
       text: "",
        synth: null,
-    },
+      },
     volume: 1,
     subjects: subjects,
+    selectedVoice: null,
+
+       pitchValues: {
+      facile: 0.8,  // Valeur de hauteur (pitch) pour le niveau Facile
+      moyen: 1,    // Valeur de hauteur (pitch) pour le niveau Moyen
+      difficile: 1.2  // Valeur de hauteur (pitch) pour le niveau Difficile
+    },
+    rateValues: {
+      facile: 0.8,  // Valeur de vitesse (rate) pour le niveau Facile
+      moyen: 1,    // Valeur de vitesse (rate) pour le niveau Moyen
+      difficile: 1.2  // Valeur de vitesse (rate) pour le niveau Difficile
+    },
+    
 
       
         selectedDifficulty: "",
@@ -138,6 +151,12 @@ export default {
           else {
             return this.subjects;
           }
+        }
+      },
+
+      watch: {
+        selectedDifficulty() {
+          this.difficultyChanged();
         }
       },
 
@@ -201,7 +220,7 @@ export default {
           this.speakGeneralRepeat();
         },
 
-      startDictation() {
+      async startDictation() {
           this.currentRepetition = 1;
           this.timeRemaining = this.timeLimit;
           this.timer = setInterval(() => {
@@ -213,6 +232,7 @@ export default {
             }
           }, 1000);
           this.isDictationStarted = true;
+          await this.getSelectedVoice();
          // this.currentText = this.selectedSubject.text; // Modifier ici pour utiliser la variable correcte
           this.speakText(this.selectedSubject.text, this.selectedSubject.repetitions, this.repetitionsEnabled); // Modifier ici pour utiliser la variable correcte
       },
@@ -234,8 +254,8 @@ export default {
         } else {
           utterance.volume = 1;
         }
-        utterance.pitch = isFinite(this.pitch) ? this.pitch : 1;
-        utterance.rate = isFinite(this.rate) ? this.rate : 1;
+          utterance.pitch = isFinite(this.pitchValues[this.selectedDifficulty]) ? this.pitchValues[this.selectedDifficulty] : 1;
+          utterance.rate = isFinite(this.rateValues[this.selectedDifficulty]) ? this.rateValues[this.selectedDifficulty] : 1;
 
         utterance.onend = () => {
           if (repetitions > 0) {
@@ -257,7 +277,45 @@ export default {
       this.synth.speak(firstUtterance);
     },
 
+    getSelectedVoice() {
+        return new Promise((resolve) => {
+          const synth = window.speechSynthesis;
+          if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = () => {
+              const voices = synth.getVoices();
+              const selectedLanguage = this.selectedLanguage;
 
+              // Vérifier si la voix correspondant à la langue sélectionnée est disponible
+              const selectedVoice = voices.find((voice) => voice.lang === selectedLanguage);
+
+              if (selectedVoice) {
+                this.selectedVoice = selectedVoice;
+              } else {
+                // La voix pour la langue sélectionnée n'est pas disponible
+                console.error(`La voix pour la langue '${selectedLanguage}' n'est pas disponible.`);
+              }
+
+              resolve();
+            };
+          } else {
+            resolve();
+          }
+        });
+      },
+
+
+      difficultyChanged() {
+    if (this.isDictationStarted) {
+      // Mettre à jour la hauteur (pitch) et la vitesse (rate) de la voix en fonction de la difficulté sélectionnée
+      if (this.synth && this.selectedVoice) {
+        this.selectedVoice.pitch = this.pitchValues[this.selectedDifficulty];
+        this.selectedVoice.rate = this.rateValues[this.selectedDifficulty];
+      }
+
+      // Relancer la dictée avec la nouvelle hauteur (pitch) et la nouvelle vitesse (rate)
+      this.speakText(this.selectedSubject.text, this.selectedSubject.repetitions);
+    }
+  },
 
       speakGeneralRepeat() {
         if (this.selectedSubject && this.selectedSubject.phrases) {

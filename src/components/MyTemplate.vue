@@ -27,35 +27,7 @@ export default {
 };
 </script>
 
-<style scoped>
-nav {
-  background-color: blue;
-  padding: 20px;
-  
-}
-
-nav ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-nav ul li {
-  display: inline;
-  margin-right: 30px;
-  margin-left: 250px;
-}
-
-nav ul li a {
-  text-decoration: none;
-  color: #333;
-}
-
-.content {
-  padding: 20px;
-}
-p{
-    color: red;
-    margin-top: 30px;
-}
+<style>
+  /* Importation du fichier CSS externe */
+  @import './mytemplate.css';
 </style>
