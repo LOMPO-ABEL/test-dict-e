@@ -1,11 +1,7 @@
-import { subjects } from "@/data";
-import subjects from './subjects.json';
-
 
 <template>
   <div class="test-dictation">
-
-    <h1><span>Dicté en ligne</span></h1>
+    <h1><span>Dictée en ligne</span></h1>
     <div class="container">
       <label for="difficulty">Niveau de difficulté :</label>
       <select id="difficulty" v-model="selectedDifficulty">
@@ -30,25 +26,25 @@ import subjects from './subjects.json';
         <option value="" disabled selected>Sélectionnez un sujet</option>
         <option v-for="subject in filteredSubjects" :key="subject.title" :value="subject">{{ subject.title }}</option>
       </select>
-      </div>
-      <div class="subject-actions">
-        <button @click="createSubject">Nouveau sujet</button>
-        <button @click="updateSubject">Mettre à jour</button>
-        <button @click="deleteSubject">Supprimer</button>
-        
-      </div>
-    
-       <div v-if="isCreatingNewSubject">
-        <h2>Nouveau sujet</h2>
-        <label for="new-subject-title">Titre :</label>
-        <input type="text" id="new-subject-title" v-model="newSubject.title">
+    </div>
 
-        <label for="new-subject-text">Texte :</label>
-        <textarea id="new-subject-text" v-model="newSubject.text"></textarea>
+    <div class="subject-actions">
+      <button @click="createSubject">Nouveau sujet</button>
+      <button @click="updateSubject">Mettre à jour</button>
+      <button @click="deleteSubject">Supprimer</button>
+    </div>
 
-        <button @click="saveNewSubject">Enregistrer</button>
-        <button @click="cancelNewSubject">Annuler</button>
-       </div>
+    <div v-if="isCreatingNewSubject">
+      <h2>Nouveau sujet</h2>
+      <label for="new-subject-title">Titre :</label>
+      <input type="text" id="new-subject-title" v-model="newSubject.title">
+
+      <label for="new-subject-text">Texte :</label>
+      <textarea id="new-subject-text" v-model="newSubject.text"></textarea>
+
+      <button @click="saveNewSubject">Enregistrer</button>
+      <button @click="cancelNewSubject">Annuler</button>
+    </div>
 
     <div v-if="selectedSubject">
       <h2>{{ selectedSubject.title }}</h2>
@@ -61,39 +57,44 @@ import subjects from './subjects.json';
         <button @click="speakText(selectedSubject.text)">Lire le texte</button>
 
         <label for="repetitionsEnabled">
-          <input
-            id="repetitionsEnabled"
-            type="checkbox"
-            v-model="repetitionsEnabled"
-          >
+          <input id="repetitionsEnabled" type="checkbox" v-model="repetitionsEnabled">
           Répéter les phrases
         </label>
 
         <div>
           <p>Temps restant : {{ timeRemaining }}s</p>
         </div>
-        
+
         <h2>{{ selectedSubject.title }}</h2>
-        <button @click="startDictation">{{ ("Reprendre") }}</button>
+        <button @click="startDictation">{{ "Reprendre" }}</button>
         <div v-for="phrase in selectedSubject.phrases" :key="phrase.text">
-           <p>{{ phrase.text }}</p>
-           <input type="number" v-model="phrase.repetitions" min="1">
+          <p>{{ phrase.text }}</p>
+          <input type="number" v-model="phrase.repetitions" min="1">
         </div>
-        <button @click="startGeneralRepeat">{{ ("RépétitionGénéral") }}</button>
+        <button @click="startGeneralRepeat">{{ "Répétition générale" }}</button>
         <button @click="repeatDictation">Répéter</button>
 
         <div>
           <p>Répétitions restantes : {{ maxRepetitions - currentRepetition }}</p>
         </div>
-        
       </div>
 
       <div class="container">
         <label for="volume">Volume :</label>
         <input type="range" id="volume" v-model="volume" min="0" max="1" step="0.1">
       </div>
-
     </div>
+
+    <div v-if="showCorrection">
+      <h2>Correction de la dictée</h2>
+      <p>Sujet : {{ correctionSubject.title }}</p>
+      <p>Réponse de l'utilisateur : {{ userInput }}</p>
+      <p>Correction :</p>
+      <div v-for="phrase in correctionSubject.phrases" :key="phrase.text">
+        <p :class="{ 'incorrect': phrase.userInput !== userInput }">{{ phrase.text }}</p>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -121,6 +122,8 @@ export default {
     volume: 1,
     subjects: subjects,
     selectedVoice: null,
+    showCorrection: false,
+    correctionSubject: null,
 
        pitchValues: {
       facile: 0.8,  // Valeur de hauteur (pitch) pour le niveau Facile
@@ -343,9 +346,18 @@ export default {
               // ...
             }
             // Réinitialiser les valeurs
+
             this.isDictationStarted = false;
             this.currentText = "";
             this.userInput = "";
+
+            // Afficher la correction
+                this.showCorrection = true;
+                this.userInput = userAnswer;
+                this.correctionSubject = {
+                  title: this.selectedSubject.title,
+                  phrases: this.selectedSubject.text.split('. ').map(text => ({ text, userInput: userAnswer })),
+                };
           }
         }
   };
