@@ -74,27 +74,28 @@
         <button @click="startGeneralRepeat">{{ "Répétition générale" }}</button>
         <button @click="repeatDictation">Répéter</button>
 
-        <div>
-          <p>Répétitions restantes : {{ maxRepetitions - currentRepetition }}</p>
+            <div>
+              <p>Répétitions restantes : {{ maxRepetitions - currentRepetition }}</p>
+            </div>
+          </div>
+
+            <div class="container">
+                <label for="volume">Volume :</label>
+                <input type="range" id="volume" v-model="volume" min="0" max="1" step="0.1">
+              </div>
+            </div>
+
+          <div v-if="showCorrection">
+              <h2>Correction de la dictée</h2>
+              <p>Sujet : {{ correctionSubject.title }}</p>
+              <p>Votre Réponse: <span v-html="formatUserAnswer()"></span></p>
+              <p>Vous avez eu la Note de: {{ score }}/20</p>
+              <p>Et voici la Correction :</p>
+              <div v-for="phrase in correctionSubject.phrases" :key="phrase.text">
+                <p :class="{ 'incorrect': phrase.userInput !== userInput }">{{ phrase.text }}</p>
+              </div>
+
         </div>
-      </div>
-
-      <div class="container">
-        <label for="volume">Volume :</label>
-        <input type="range" id="volume" v-model="volume" min="0" max="1" step="0.1">
-      </div>
-    </div>
-
-    <div v-if="showCorrection">
-      <h2>Correction de la dictée</h2>
-      <p>Sujet : {{ correctionSubject.title }}</p>
-      <p>Réponse de l'utilisateur : {{ userInput }}</p>
-      <p>Correction :</p>
-      <div v-for="phrase in correctionSubject.phrases" :key="phrase.text">
-        <p :class="{ 'incorrect': phrase.userInput !== userInput }">{{ phrase.text }}</p>
-      </div>
-    </div>
-
   </div>
 </template>
 
@@ -110,7 +111,7 @@ export default {
       maxRepetitions: 3, // Nombre maximal de répétitions autorisées
       currentRepetition: 1,
       timer: null,
-      timeLimit: 60, // Temps limite en secondes
+      timeLimit: 15, // Temps limite en secondes
       timeRemaining: 0,
       repetitionsEnabled: false,
       isCreatingNewSubject: false,
@@ -223,6 +224,30 @@ export default {
           this.speakGeneralRepeat();
         },
 
+          formatUserAnswer() {
+            const userAnswer = this.userInput.trim();
+            if (userAnswer === '') {
+              return userAnswer;
+            }
+
+            const correctedAnswer = this.correctionSubject.phrases.map(phrase => {
+              const phraseWords = phrase.userInput.split(' ');
+              const userWords = userAnswer.split(' ');
+
+              const correctedWords = phraseWords.map((word, index) => {
+                if (index >= userWords.length || word !== userWords[index]) {
+                  return `<span class="error-word">${word}</span>`;
+                } else {
+                  return word;
+                }
+              });
+
+              return correctedWords.join(' ');
+            });
+
+            return correctedAnswer.join(' ');
+          },
+
       async startDictation() {
           this.currentRepetition = 1;
           this.timeRemaining = this.timeLimit;
@@ -308,17 +333,17 @@ export default {
 
 
       difficultyChanged() {
-    if (this.isDictationStarted) {
-      // Mettre à jour la hauteur (pitch) et la vitesse (rate) de la voix en fonction de la difficulté sélectionnée
-      if (this.synth && this.selectedVoice) {
-        this.selectedVoice.pitch = this.pitchValues[this.selectedDifficulty];
-        this.selectedVoice.rate = this.rateValues[this.selectedDifficulty];
-      }
+          if (this.isDictationStarted) {
+            // Mettre à jour la hauteur (pitch) et la vitesse (rate) de la voix en fonction de la difficulté sélectionnée
+            if (this.synth && this.selectedVoice) {
+              this.selectedVoice.pitch = this.pitchValues[this.selectedDifficulty];
+              this.selectedVoice.rate = this.rateValues[this.selectedDifficulty];
+            }
 
-      // Relancer la dictée avec la nouvelle hauteur (pitch) et la nouvelle vitesse (rate)
-      this.speakText(this.selectedSubject.text, this.selectedSubject.repetitions);
-    }
-  },
+            // Relancer la dictée avec la nouvelle hauteur (pitch) et la nouvelle vitesse (rate)
+            this.speakText(this.selectedSubject.text, this.selectedSubject.repetitions);
+          }
+        },
 
       speakGeneralRepeat() {
         if (this.selectedSubject && this.selectedSubject.phrases) {
@@ -329,38 +354,57 @@ export default {
         }
       },
 
-
       checkAnswer() {
-          const userAnswer = this.userInput.trim();
-          const expectedAnswer = this.selectedSubject.text.trim();
-            if (userAnswer === expectedAnswer) {
-              alert("Bonne réponse !");
-            } else {
-              alert("Mauvaise réponse. Réessayez !");
+            const userAnswer = this.userInput.trim();
+            const expectedAnswer = this.selectedSubject.text.trim();
+
+            const userWords = userAnswer.split(' ');
+            const expectedWords = expectedAnswer.split(' ');
+            let score = 0;
+
+            for (let i = 0; i < userWords.length; i++) {
+                if (i < expectedWords.length && userWords[i] === expectedWords[i]) {
+                    score++;
+                  }
             }
 
-            if (this.currentRepetition < this.maxRepetitions) {
-              this.currentRepetition++;
-              this.isDictationStarted = true;
+            const maxScore = expectedWords.length;
+            const percentage = (score / maxScore) * 20; // Calcul du pourcentage correspondant à la note sur 20
+            this.score = percentage.toFixed(2); // Stockage de la note dans la propriété 'score'
+
+            let correctedAnswer = '';
+            if (this.isTimeUp) {
+                correctedAnswer = userAnswer; // Utiliser la réponse de l'utilisateur telle quelle
             } else {
-              // ...
+            correctedAnswer = userWords.map((word, index) => {
+            if (word === expectedWords[index]) {
+                return word;
+            } else {
+                return `<span class="error-word">${word.replace(/<|>/g, '')}</span>`;
+            }
+            }).join(' ');
+            }
+            if (this.currentRepetition < this.maxRepetitions) {
+               this.currentRepetition++;
+               this.isDictationStarted = true;
+            } else {
+                  // ...
             }
             // Réinitialiser les valeurs
-
             this.isDictationStarted = false;
             this.currentText = "";
             this.userInput = "";
-
             // Afficher la correction
-                this.showCorrection = true;
-                this.userInput = userAnswer;
-                this.correctionSubject = {
-                  title: this.selectedSubject.title,
-                  phrases: this.selectedSubject.text.split('. ').map(text => ({ text, userInput: userAnswer })),
-                };
-          }
+            this.showCorrection = true;
+            this.correctionSubject = {
+                title: this.selectedSubject.title,
+                phrases: this.selectedSubject.text.split('. ').map(text => ({ text, userInput: correctedAnswer })),
+            };
+              this.userInput = correctedAnswer;
+            },
         }
   };
+  
 </script>
 
 <style>

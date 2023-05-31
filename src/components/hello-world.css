@@ -74,10 +74,16 @@ textarea {
      
 
   }
+
   .incorrect {
-    text-decoration: underline;
-    color: blue;
-  }
+  text-decoration: underline;
+  color: black !important;
+}
+
+.error-word {
+  text-decoration: underline;
+  color: blue;
+}
 
   
 
