@@ -419,5 +419,5 @@ export default {
 
 <style>
   /* Importer votre fichier CSS externe */
-  @import './hello-world.css';
+  @import './CSS/hello-world.css';
 </style>

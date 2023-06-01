@@ -8,8 +8,8 @@
       </ul>
     </nav>
     <router-view></router-view>
-    <p>BONJOUR</p>
   </div>
+  
 </template>
 
 <script>
@@ -29,5 +29,5 @@ export default {
 
 <style>
   /* Importation du fichier CSS externe */
-  @import './mytemplate.css';
+ @import './CSS/mytemplate.css';
 </style>
