@@ -8,17 +8,17 @@
       </ul>
     </nav>
     <router-view></router-view>
+    <p>BONJOUR</p>
   </div>
 </template>
 
 <script>
 import { createRouter, createWebHistory } from 'vue-router';
 
-
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/dictation', component:  () => import('./HelloWorld.vue')},
+    { path: '/dictation', component: () => import('./HelloWorld.vue') },
   ],
 });
 

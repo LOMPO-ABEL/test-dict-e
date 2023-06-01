@@ -1,14 +1,13 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';
-import MyTemplate from './components/MyTemplate.vue';
 import HelloWorld from './components/HelloWorld.vue';
 
 
 
 const routes = [
-  { path: '/', component: MyTemplate },
-  { path: '/dictation', component: HelloWorld },
+  { path: '/', component: { template: '<div></div>' } }, // Composant vide pour l'accueil
+  { path: '/dictation', component: HelloWorld }
 ];
 
 const router = createRouter({
