@@ -15,15 +15,16 @@
 <script>
 import { createRouter, createWebHistory } from 'vue-router';
 
-const router = createRouter({
+const routes = createRouter({
   history: createWebHistory(),
   routes: [
+    { path: '/', component: () => import('./AccueilPage.vue') },
     { path: '/dictation', component: () => import('./HelloWorld.vue') },
   ],
 });
 
 export default {
-  router,
+  routes,
 };
 </script>
 
