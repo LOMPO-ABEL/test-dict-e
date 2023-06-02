@@ -5,7 +5,7 @@
             <h1><span>Dictée en ligne</span></h1>
             <div class="container">
               <label for="difficulty">Niveau de difficulté :</label>
-              <select id="difficulty" v-model="selectedDifficulty">
+              <select id="difficulty" v-model="selectedDifficulty" @change="setDifficultyLevel(selectedDifficultyLevel)">
                 <option value="facile">Facile</option>
                 <option value="moyen">Moyen</option>
                 <option value="difficile">Difficile</option>
@@ -125,6 +125,7 @@ export default {
                 selectedVoice: null,
                 showCorrection: false,
                 correctionSubject: null,
+                repetitionCount: 1, // Nombre de répétitions par défaut (niveau Difficile)
 
                 pitchValues: {
                   facile: 0.8,  // Valeur de hauteur (pitch) pour le niveau Facile
@@ -259,7 +260,17 @@ export default {
                   this.isDictationStarted = true;
                   await this.getSelectedVoice();
                 // this.currentText = this.selectedSubject.text; // Modifier ici pour utiliser la variable correcte
-                  this.speakText(this.selectedSubject.text, this.selectedSubject.repetitions, this.repetitionsEnabled); // Modifier ici pour utiliser la variable correcte
+                  this.speakText(this.selectedSubject.text, this.repetitionCount, this.selectedSubject.repetitions, this.repetitionsEnabled); // Modifier ici pour utiliser la variable correcte
+              },
+
+              setDifficultyLevel(level) {
+                if (level === 'facile') {
+                  this.repetitionCount = 3;
+                } else if (level === 'moyen') {
+                  this.repetitionCount = 2;
+                } else if (level === 'difficile') {
+                  this.repetitionCount = 1;
+                }
               },
 
               speakText(fullText, repetitions) {
