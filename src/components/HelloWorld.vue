@@ -53,6 +53,7 @@
 
               <div v-if="isDictationStarted">
                 <p>{{ currentText }}</p>
+                <h2>Ecrire la dictée Ici:</h2>
                 <textarea v-model="userInput"></textarea>
                 <button @click="checkAnswer">Vérifier</button>
                 <button @click="speakText(selectedSubject.text)">Lire le texte</button>
@@ -260,14 +261,14 @@ export default {
                   this.isDictationStarted = true;
                   await this.getSelectedVoice();
                 // this.currentText = this.selectedSubject.text; // Modifier ici pour utiliser la variable correcte
-                  this.speakText(this.selectedSubject.text, this.repetitionCount, this.selectedSubject.repetitions, this.repetitionsEnabled); // Modifier ici pour utiliser la variable correcte
+                  this.speakText(this.selectedSubject.text, this.repetitionCount, this.selectedSubject.repetitions, this.repetitionsEnabled); // A Modifier  pour utiliser la variable correcte
               },
 
               setDifficultyLevel(level) {
                 if (level === 'facile') {
-                  this.repetitionCount = 3;
+                  this.repetitionCount = 1;
                 } else if (level === 'moyen') {
-                  this.repetitionCount = 2;
+                  this.repetitionCount = 1;
                 } else if (level === 'difficile') {
                   this.repetitionCount = 1;
                 }

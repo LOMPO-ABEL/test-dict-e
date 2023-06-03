@@ -4,7 +4,7 @@
       <ul>
         <li><router-link to="/">Accueil</router-link></li>
         <li><router-link to="/dictation">Dictée</router-link></li>
-        <li><router-link to="/help">Aide</router-link></li>
+        <li><router-link to="/help">Conjugaison</router-link></li>
       </ul>
     </nav>
     <router-view></router-view>
@@ -20,6 +20,7 @@ const routes = createRouter({
   routes: [
     { path: '/', component: () => import('./AccueilPage.vue') },
     { path: '/dictation', component: () => import('./HelloWorld.vue') },
+    { path: '/help', component: () => import('./ConjuGaison.vue') },
   ],
 });
 

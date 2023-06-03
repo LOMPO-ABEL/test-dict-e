@@ -11,6 +11,8 @@
     "@codekraft-studio/vue-speech": "^0.1.0",
     "axios": "^1.4.0",
     "core-js": "^3.8.3",
+    "french-verbs": "^5.1.0",
+    "french-verbs-lefff": "^3.1.0",
     "vue": "^3.2.13",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.0",

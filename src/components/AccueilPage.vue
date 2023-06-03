@@ -11,7 +11,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 /* Styles spécifiques à la page d'accueil si nécessaire */
  @import './CSS/acceuil.css';
 </style>
