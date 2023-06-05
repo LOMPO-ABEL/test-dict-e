@@ -266,9 +266,9 @@ export default {
 
               setDifficultyLevel(level) {
                 if (level === 'facile') {
-                  this.repetitionCount = 1;
+                  this.repetitionCount = 3;
                 } else if (level === 'moyen') {
-                  this.repetitionCount = 1;
+                  this.repetitionCount = 2;
                 } else if (level === 'difficile') {
                   this.repetitionCount = 1;
                 }

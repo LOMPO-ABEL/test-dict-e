@@ -12,13 +12,13 @@
     <div>
       <h2 v-if="result">{{ verbe }} au {{ temps }}</h2>
       <p v-if="result" style="white-space: pre-line" class="centered-text">{{ result }}</p>
-      <button v-if="result" @click="lireResultat" class="centered-button">Lire le résultat</button>
+      <button v-if="result" @click="lireResultat" class="centered-button">Lire la conjugaison</button>
     </div>
   </div>
 </template>
 
 <script>
-import { getConjugation } from 'french-verbs';
+import { getConjugation} from 'french-verbs';
 import Lefff from 'french-verbs-lefff/dist/conjugations.json';
 
 export default {
@@ -44,8 +44,20 @@ export default {
         };
       },
         methods: {
-          conjuguer() {
+         conjuguer() {
+            const verbesImpersonnels = ['pleuvoir', 'neiger', 'sembler']; // Ajoutez d'autres verbes impersonnels si nécessaire
+
             if (this.verbe && this.temps) {
+             if (verbesImpersonnels.includes(this.verbe)) {
+                this.result = `Le verbe '${this.verbe}' est impersonnel et n'est pas conjugué selon les personnes au ${this.temps}.`;
+                this.titre = `Verbe '${this.verbe}' au ${this.temps}`;
+                return;
+              }
+              const verbConjugations = Lefff[this.verbe];
+              if (!verbConjugations) {
+                this.result = "Veuillez entrer un verbe valide.";
+                return;
+              }
               const pronoms = ['Je', 'Tu', 'Il/Elle', 'Nous', 'Vous', 'Ils/Elles'];
               const conjugations = pronoms.map((pronom, i) => {
                 const conjugation = getConjugation(Lefff, this.verbe, this.temps, i);
@@ -54,9 +66,10 @@ export default {
               this.result = conjugations.join('\n\n');
               this.titre = `${this.verbe} au ${this.temps}`;
             } else {
-              console.log('Veuillez entrer un verbe et un temps.');
+                 console.log('Veuillez entrer un verbe et un temps.');
             }
           },
+
         lireResultat() {
             const lines = this.result.split('\n');
             const delay = 1000; // Durée de la pause entre chaque ligne (en millisecondes)
