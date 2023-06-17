@@ -49,7 +49,7 @@ export default {
 
             if (this.verbe && this.temps) {
              if (verbesImpersonnels.includes(this.verbe)) {
-                this.result = `Le verbe '${this.verbe}' est impersonnel et n'est pas conjugué selon les personnes au ${this.temps}.`;
+                this.result = `Le verbe '${this.verbe}' est impersonnel et n'est pas conjugué selon les personnes au ${this.temps} sauf a la troisieme personne du singulier et du pluriel.`;
                 this.titre = `Verbe '${this.verbe}' au ${this.temps}`;
                 return;
               }

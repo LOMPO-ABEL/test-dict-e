@@ -26,6 +26,29 @@ const messages = {
     delete: "Supprimer",
     remainingTime: "Temps restant : {time}s",
     remainingRepetitions: "Répétitions restantes : {repetitions}"
+  },
+
+  es: {
+    // Messages en espagnol
+    welcome: "Bienvenido a la aplicación de prueba de dictado",
+    difficulty: "Dificultad",
+    subject: "Tema",
+    newSubject: "Nuevo tema",
+    update: "Actualizar",
+    delete: "Eliminar",
+    remainingTime: "Tiempo restante: {time}s",
+    remainingRepetitions: "Repeticiones restantes: {repetitions}"
+  },
+  de: {
+    // Messages en allemand
+    welcome: "Willkommen bei der Diktat-Test-App",
+    difficulty: "Schwierigkeit",
+    subject: "Thema",
+    newSubject: "Neues Thema",
+    update: "Aktualisieren",
+    delete: "Löschen",
+    remainingTime: "Verbleibende Zeit: {time}s",
+    remainingRepetitions: "Verbleibende Wiederholungen: {repetitions}"
   }
 };
 
