@@ -17,8 +17,8 @@
           <select id="language" v-model="selectedLanguage">
             <option value="en-US">English</option>
             <option value="fr-FR">Français</option>
-            <option value="es">Español</option> 
-            <option value="de">Deutsch</option> 
+             <!-- <option value="es">Español</option> 
+            <option value="de">Deutsch</option> -->
             <!-- Ajoutez d'autres options pour les autres langues si nécessaire -->
           </select>
         </div>
@@ -62,16 +62,16 @@
             <button @click="pauseDictation">{{ isPaused ? 'Reprendre' : 'Pause' }}</button>
 
             
-            
-
             <div>
               <p>Temps restant : {{ timeRemaining }}s</p>
               <button @click="increaseDuration">Augmenter la durée</button>
+              <button @click="replayDictation">Rejouer la dictée</button>
+
             </div>
 
 
             <h2>{{ selectedSubject.title }}</h2>
-            <button @click="startDictation">{{ "Reprendre" }}</button>
+            <!--<button @click="startDictation">{{ "Reprendre" }}</button>-->
             <button @click="finishDictation">Terminer la dictée</button>
             <div v-for="phrase in selectedSubject.phrases" :key="phrase.text">
               <p>{{ phrase.text }}</p>
@@ -100,6 +100,7 @@
             <p :class="{ 'incorrect': phrase.userInput !== userInput }">{{ phrase.text }}</p>
           </div>
           <button @click="finishDictation">Terminer la dictée</button>
+          <button @click="replayDictation">Rejouer la dictée</button>
         </div>
        
   </div>
@@ -134,6 +135,8 @@ data() {
             repetitionCount: 1, // Nombre de répétitions par défaut (niveau Difficile)
             isPaused: false,
             isSpeaking: false,
+            
+            
 
 
             pitchValues: {
@@ -227,9 +230,7 @@ data() {
             this.isCreatingNewSubject = false;
           },
 
-          repeatDictation() {
-            this.speakGeneralRepeat();
-          },
+          
 
           increaseDuration() {
             this.timeRemaining = this.timeLimit; // Augmentez la durée de la dictée à 60 secondes
@@ -260,6 +261,7 @@ data() {
           },
 
           startDictation() {
+        
               if (this.isDictationStarted && this.isPaused) {
                 if (this.userInput.trim() !== "") {
                   this.showCorrection = true;
@@ -271,7 +273,7 @@ data() {
                 this.isPaused = false;
                 this.speakText(this.currentText);
               } else {
-                this.currentRepetition = 1;
+                this.currentRepetition = 3;
                 this.timeRemaining = this.timeLimit;
                 this.timer = setInterval(() => {
                   if (this.timeRemaining > 0) {
@@ -287,20 +289,26 @@ data() {
                 this.userInput = "";
                 this.getSelectedVoice();
                 //this.currentText = this.selectedSubject.text;
-                this.getSelectedVoice().then(() => {
-                this.speakText(
-                  this.selectedSubject.text,
-                  this.repetitionCount,
-                  this.selectedSubject.repetitions,
-                  this.repetitionsEnabled
-                );
+                this.getSelectedVoice().then(() => { 
+                    this.speakText(
+                      this.selectedSubject.text,
+                      this.repetitionCount,
+                      this.selectedSubject.repetitions,
+                      this.repetitionsEnabled
+                    );
               });
               }
             },
-             
+             // fonction pour la pause de la lecture de la dictée 
             stopDictation() {
               if (this.synth && this.synth.speaking) {
-                this.synth.cancel();
+                this.synth.pause();
+              }
+            },
+            // Fonction pour la reprise de la dictée
+            resumeDictation(){
+              if (this.synth && this.synth.speaking) {
+                this.synth.resume();
               }
             },
 
@@ -312,7 +320,7 @@ data() {
                 this.stopDictation();
                 this.isSpeaking = false; 
               } else {
-                this.startDictation();
+                this.resumeDictation();
                 this.timer = setInterval(() => {
                   if (!this.isPaused && this.timeRemaining > 0) {
                     this.timeRemaining--;
@@ -329,12 +337,28 @@ data() {
             this.userInput = "";
           },
 
+          replayDictation() {
+            // Augmente la valeur de repetitionCount
+            this.repetitionCount++;
+
+            // Appelle la fonction speakText avec le nouveau nombre de répétitions
+            this.speakText(
+              this.selectedSubject.text,
+              this.repetitionCount,
+              this.selectedSubject.repetitions,
+              this.repetitionsEnabled
+            );
+          },
+                  
+
           finishDictation() {
             this.isDictationStarted = false;
             this.showCorrection = false;
             this.correctionSubject = null;
             this.userInput = "";
             clearInterval(this.timer);
+            this.repetitionCount = 1;
+            window.location.reload();
           },
 
           setDifficultyLevel(level) {
